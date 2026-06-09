@@ -1,17 +1,12 @@
 import { defineConfig } from "@rsbuild/core";
 import { pluginReact } from "@rsbuild/plugin-react";
-import { pluginTailwindcss } from "@rsbuild/plugin-tailwindcss";
 import { pluginSvgr } from "@rsbuild/plugin-svgr";
 import { pluginTypedCSSModules } from "@rsbuild/plugin-typed-css-modules";
 import { pluginImageCompress } from "@rsbuild/plugin-image-compress";
 
 export default defineConfig({
   plugins: [
-    pluginTailwindcss({
-      optimize: {
-        minify: true,
-      },
-    }),
+   
     pluginReact(),
     pluginTypedCSSModules(),
     pluginImageCompress(),
