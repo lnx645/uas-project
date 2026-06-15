@@ -1,5 +1,6 @@
 package com.uasproject.app.entity;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
@@ -24,7 +25,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class User implements UserDetails {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -43,49 +44,53 @@ public class User implements UserDetails {
 
     @Column(name = "jurusan", nullable = true)
     private String jurusan;
-    
+
+    @Column(name = "avatar_url", nullable = true)
+    private String avatar_url;
+
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
-    // Otomatis mengisi waktu created_at saat user pertama kali register
+    @Column(name = "is_online",nullable = true)
+    private Boolean isOnline = false;
+
+    @Column(name = "last_active",nullable = true)
+    private Instant lastActive;
+
+    @Column(name = "points",nullable = true)
+    private long points;
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
     }
 
-    // --- PERBAIKAN METHOD IMPLEMENTASI USERDETAILS ---
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        // Karena forum sederhana belum butuh Role bertingkat (Admin/User),
-        // kita kembalikan list kosong saja agar tidak memicu error.
         return List.of();
     }
 
     @Override
     public String getUsername() {
-        // PENTING: Karena sistem login kita berbasis EMAIL, 
-        // method getUsername() harus mengembalikan nilai dari property email!
         return this.email;
     }
 
     @Override
     public boolean isAccountNonExpired() {
-        return true; // Ubah ke true agar akun tidak dianggap kedaluwarsa
+        return true; 
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return true; // Ubah ke true agar akun tidak dalam kondisi terkunci
+        return true;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return true; // Ubah ke true agar kredensial/password tidak kedaluwarsa
+        return true;
     }
 
     @Override
     public boolean isEnabled() {
-        return true; // Ubah ke true agar akun langsung aktif setelah dibuat
+        return true;
     }
 }

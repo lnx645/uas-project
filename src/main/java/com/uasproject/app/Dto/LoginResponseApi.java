@@ -1,5 +1,6 @@
 package com.uasproject.app.Dto;
 
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -8,4 +9,6 @@ import lombok.Data;
 public class LoginResponseApi {
     private String status;
     private String token;
+    private String name;
+    private String email;
 }
