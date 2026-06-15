@@ -28,6 +28,7 @@ public class UserMeResponse {
         } else {
             this.isOnline = false;
         }
+        
     }
 
 }

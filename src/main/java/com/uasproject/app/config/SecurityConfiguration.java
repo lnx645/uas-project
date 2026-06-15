@@ -34,7 +34,7 @@ public class SecurityConfiguration {
                                                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                                                 .requestMatchers("/api/auth/**").permitAll()
                                                 .requestMatchers(HttpMethod.GET, "/api/threads/**",
-                                                                "/api/categories/**")
+                                                                "/api/categories/**", "/api/users/active","/api/users/active_this_week")
                                                 .permitAll()
                                                 .requestMatchers("/error").permitAll()
                                                 .requestMatchers("/api/v1/**").authenticated()
@@ -63,7 +63,7 @@ public class SecurityConfiguration {
 
                 UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
                 source.registerCorsConfiguration("/**", configuration);
-                
+
                 return source;
         }
 }

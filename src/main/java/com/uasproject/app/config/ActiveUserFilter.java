@@ -27,8 +27,9 @@ public class ActiveUserFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null && authentication.isAuthenticated() 
-                && !(authentication.getPrincipal() instanceof String && authentication.getPrincipal().equals("anonymousUser"))) {
+        if (authentication != null && authentication.isAuthenticated()
+                && !(authentication.getPrincipal() instanceof String
+                        && authentication.getPrincipal().equals("anonymousUser"))) {
             Object principal = authentication.getPrincipal();
             String username = null;
             if (principal instanceof UserDetails) {
@@ -39,11 +40,10 @@ public class ActiveUserFilter extends OncePerRequestFilter {
             if (username != null) {
                 userRepository.findByEmail(username).ifPresent(user -> {
                     user.setLastActive(Instant.now());
-                    userRepository.save(user); 
+                    userRepository.save(user);
                 });
             }
         }
-
         filterChain.doFilter(request, response);
     }
 }
