@@ -17,13 +17,8 @@ public class StatisticService {
     private UserRepository userRepository;
 
     public List<UserMeResponse> activeUsers() {
-        List<UserMeResponse> activeUsers = this.userRepository.findAll().stream().map(user -> new UserMeResponse(
-                user.getId(),
-                user.getName(),
-                user.getEmail(),
-                user.getUsername(),
-                user.getAvatar_url(),
-                user.getLastActive())).filter(UserMeResponse::isOnline)
+        List<UserMeResponse> activeUsers = this.userRepository.findAll().stream().map(user -> new UserMeResponse(user))
+                .filter(UserMeResponse::isOnline)
                 .collect(Collectors.toList());
         return activeUsers;
     }

@@ -65,14 +65,7 @@ public class AuthController {
 
     @GetMapping("/api/v1/me")
     public ResponseEntity<?> getUser(@AuthenticationPrincipal User userDetails) {
-        UserMeResponse response = new UserMeResponse(
-                userDetails.getId(),
-                userDetails.getName(),
-                userDetails.getEmail(),
-                userDetails.getUsername(),
-                userDetails.getAvatar_url(),
-                userDetails.getLastActive()
-        );
+        UserMeResponse response = new UserMeResponse(userDetails);
 
         return ResponseEntity.ok(response);
     }

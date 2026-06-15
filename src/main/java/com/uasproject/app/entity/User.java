@@ -59,10 +59,19 @@ public class User implements UserDetails {
 
     @Column(name = "points",nullable = true)
     private long points;
+
+    @Column(name = "bio",nullable = true,length = 520)
+    private String bio;
+
+    @Column(name = "badge",nullable = true)
+    private String badge;
+
+    
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
     }
+    
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
