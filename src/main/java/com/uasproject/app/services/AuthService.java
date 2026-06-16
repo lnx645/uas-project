@@ -11,6 +11,7 @@ import com.uasproject.app.Dto.LoginRequestApi;
 import com.uasproject.app.Dto.LoginResponseApi;
 import com.uasproject.app.Dto.RegisterRequestApi;
 import com.uasproject.app.entity.User;
+import com.uasproject.app.entity.User.AuthProvider;
 import com.uasproject.app.repository.UserRepository;
 
 import lombok.AllArgsConstructor;
@@ -23,7 +24,6 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
 
-
     public LoginResponseApi register(RegisterRequestApi request) {
         if (userRepository.existsByEmail(request.getEmail())) {
             throw new RuntimeException("Email sudah terdaftar!");
@@ -32,6 +32,7 @@ public class AuthService {
         user.setName(request.getName());
         user.setEmail(request.getEmail());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
+        user.setProvider(AuthProvider.REGULAR);
         userRepository.save(user);
 
         String jwtToken = jwtService.generateToken(user.getEmail());
@@ -41,8 +42,10 @@ public class AuthService {
     public LoginResponseApi login(LoginRequestApi request) {
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new RuntimeException("User tidak ditemukan!"));
-                user.setLastActive(Instant.now());
-            userRepository.save(user);
+        user.setLastActive(Instant.now());
+        user.setProvider(AuthProvider.REGULAR);
+
+        userRepository.save(user);
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             throw new RuntimeException("Password salah!");
         }
@@ -78,6 +81,7 @@ public class AuthService {
             if (userOptional.isEmpty()) {
                 user = new User();
                 user.setEmail(email);
+                user.setProvider(AuthProvider.GOOGLE);
                 user.setName(name);
                 user.setPoints(0);
                 user.setAvatar_url(avatar_url);

@@ -1,5 +1,6 @@
 package com.uasproject.app.entity;
 
+import java.security.AuthProvider;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.Collection;
@@ -10,6 +11,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -42,8 +45,7 @@ public class User implements UserDetails {
     @Column(name = "password", nullable = false, length = 225)
     private String password;
 
-
-    @Column(name = "kredensial",nullable = true)
+    @Column(name = "kredensial", nullable = true)
     private String kredensial;
     @Column(name = "avatar_url", nullable = true)
     private String avatar_url;
@@ -51,28 +53,33 @@ public class User implements UserDetails {
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
-    @Column(name = "is_online",nullable = true)
+    @Enumerated(EnumType.STRING)
+    private AuthProvider provider;
+
+    @Column(name = "is_online", nullable = true)
     @Builder.Default
     private Boolean isOnline = false;
 
-    @Column(name = "last_active",nullable = true)
+    @Column(name = "last_active", nullable = true)
     private Instant lastActive;
 
-    @Column(name = "points",nullable = true)
+    @Column(name = "points", nullable = true)
     private long points;
 
-    @Column(name = "bio",nullable = true,columnDefinition = "TEXT")
+    @Column(name = "bio", nullable = true, columnDefinition = "TEXT")
     private String bio;
 
-    @Column(name = "badge",nullable = true)
+    @Column(name = "badge", nullable = true)
     private String badge;
 
- 
+    public enum AuthProvider {
+        REGULAR, GOOGLE
+    }
+
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
     }
-    
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -86,7 +93,7 @@ public class User implements UserDetails {
 
     @Override
     public boolean isAccountNonExpired() {
-        return true; 
+        return true;
     }
 
     @Override
