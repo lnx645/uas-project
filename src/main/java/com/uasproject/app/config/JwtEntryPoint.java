@@ -18,18 +18,17 @@ import java.util.Map;
 public class JwtEntryPoint implements AuthenticationEntryPoint {
 
     @Override
-    public void commence(HttpServletRequest request,
+    public void commence(
+            HttpServletRequest request,
             HttpServletResponse response,
-            AuthenticationException authException) throws IOException, ServletException {
-
+            AuthenticationException authException) 
+            throws IOException, ServletException {
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-
         Map<String, Object> body = new HashMap<>();
         body.put("timestamp", LocalDateTime.now().toString());
         body.put("status", HttpServletResponse.SC_UNAUTHORIZED);
         body.put("error", "Unauthorized");
-
         Object jwtError = request.getAttribute("jwt_error");
         body.put("message", jwtError != null ? jwtError.toString() : "Token tidak valid atau sudah kedaluwarsa!");
         body.put("path", request.getServletPath());

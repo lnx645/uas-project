@@ -72,8 +72,6 @@ public class AuthService {
             if (email == null) {
                 throw new RuntimeException("Gagal mendapatkan email dari Google User Info!");
             }
-
-            // Jalankan logika sinkronisasi database
             Optional<User> userOptional = userRepository.findByEmail(email);
             User user;
 

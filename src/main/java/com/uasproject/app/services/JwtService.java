@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class JwtService {
     private final String SECRET_KEY = "basdiusyr38327498327493274324234234";
-    private final long EXPIRATION_TIME = 86400000; // 24 Jam dalam milidetik
+    private final long EXPIRATION_TIME = 86400000; 
 
     private SecretKey getSigningKey() {
         return Keys.hmacShaKeyFor(SECRET_KEY.getBytes());

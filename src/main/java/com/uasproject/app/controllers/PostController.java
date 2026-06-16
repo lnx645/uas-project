@@ -11,7 +11,12 @@ import com.uasproject.app.entity.User;
 public class PostController {
     @GetMapping("/api/threads")
     public ResponseEntity<?> getThreads(@AuthenticationPrincipal User userDetails) {
-        return ResponseEntity.ok("Berhasl"+userDetails.getId());
+        return ResponseEntity.ok("Berhasl" + userDetails.getId());
     }
-    
+
+    @GetMapping("/api/v1/profile/posts")
+    public ResponseEntity<?> getProfilePost(@AuthenticationPrincipal User user) {
+        return ResponseEntity.ok(user);
+    }
+
 }
