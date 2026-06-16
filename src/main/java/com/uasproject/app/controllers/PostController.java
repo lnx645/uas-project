@@ -13,4 +13,5 @@ public class PostController {
     public ResponseEntity<?> getThreads(@AuthenticationPrincipal User userDetails) {
         return ResponseEntity.ok("Berhasl"+userDetails.getId());
     }
+    
 }

@@ -25,13 +25,7 @@ public class StatisticService {
 
     public List<UserThisWeekDtoResponse> topActiveUser() {
         List<UserThisWeekDtoResponse> data = this.userRepository.findAll().stream()
-                .map(user -> new UserThisWeekDtoResponse(
-                        user.getName(),
-                        user.getAvatar_url(),
-                        user.getPoints(),
-                        user.getLastActive(),
-                        user.getJurusan(),
-                        user.getTahun_angkatan()))
+                .map(user -> new UserThisWeekDtoResponse(user))
                 .sorted(Comparator.comparing(UserThisWeekDtoResponse::getPoints).reversed())
                 .collect(Collectors.toList());
         return data;

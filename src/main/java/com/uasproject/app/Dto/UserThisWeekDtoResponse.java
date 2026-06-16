@@ -3,6 +3,8 @@ package com.uasproject.app.Dto;
 import java.time.Duration;
 import java.time.Instant;
 
+import com.uasproject.app.entity.User;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -13,25 +15,18 @@ public class UserThisWeekDtoResponse {
     private String avatarUrl;
     private long points;
     private Boolean isOnline;
-    private String jurusan;
-    private String angkatan;
-    public UserThisWeekDtoResponse(String name, String avatarUrl, long points, Instant lastActive, String jurusan, String angkatanLengkap) {
-        this.name = name;
-        this.avatarUrl = avatarUrl;
-        this.points = points;
-        this.jurusan = jurusan;
+    private String kredensial;
 
-        if (lastActive != null) {
-            long secondsPassed = Duration.between(lastActive, Instant.now()).toSeconds();
+    public UserThisWeekDtoResponse(User user) {
+        this.setName(user.getName());
+        this.setAvatarUrl(user.getAvatar_url());
+        this.setPoints(user.getPoints());
+        this.setKredensial(user.getKredensial());
+        if (user.getLastActive() != null) {
+            long secondsPassed = Duration.between(user.getLastActive(), Instant.now()).toSeconds();
             this.isOnline = secondsPassed <= 60;
         } else {
-            this.isOnline = false;
-        }
-
-        if (angkatanLengkap != null && angkatanLengkap.length() >= 2) {
-            this.angkatan = angkatanLengkap.substring(angkatanLengkap.length() - 2);
-        } else {
-            this.angkatan = angkatanLengkap;
+            this.setIsOnline(false);
         }
     }
 }

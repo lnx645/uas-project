@@ -11,8 +11,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import com.uasproject.app.entity.User;
 
 import lombok.Data;
@@ -31,6 +29,7 @@ public class UserMeResponse {
     private boolean isOnline;
     private String badge;
     private User userDetails;
+    private String kredensial;
     private long points;
 
     private Set<String> tags;
@@ -46,9 +45,7 @@ public class UserMeResponse {
         this.bio = userDetails.getBio();
         this.points = userDetails.getPoints();
         this.tags = new HashSet<>();
-        this.tags.add(userDetails.getJurusan());
-        this.tags.add(userDetails.getTahun_angkatan());
-
+        this.kredensial = userDetails.getKredensial();
         LocalDateTime tanggalJoinDateTime = userDetails.getCreatedAt();
 
         if (tanggalJoinDateTime != null) {
@@ -73,12 +70,8 @@ public class UserMeResponse {
                     textWaktuJoin = "Baru saja";
                 }
             }
-            this.tags.add("Join "+textWaktuJoin);
+            this.tags.add("Join " + textWaktuJoin);
         }
-
-        // Tag lainnya tetap aman
-        this.tags.add(userDetails.getJurusan());
-        this.tags.add(userDetails.getTahun_angkatan());
 
         if (lastActive != null) {
             long secondsPassed = Duration.between(lastActive, Instant.now()).toSeconds();

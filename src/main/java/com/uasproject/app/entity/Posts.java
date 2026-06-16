@@ -52,13 +52,6 @@ public class Posts {
     @Column(name = "faculty_tag", length = 100)
     private String facultyTag;
 
-    @Column(name = "is_answered")
-    @Builder.Default
-    private Boolean isAnswered = false;
-    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    @Builder.Default
-    private List<PollOption> pollOptions = new ArrayList<>();
-
     @Column(name = "likes_count", nullable = false)
     @Builder.Default
     private Integer likesCount = 0;
@@ -66,6 +59,10 @@ public class Posts {
     @Column(name = "replies_count", nullable = false)
     @Builder.Default
     private Integer repliesCount = 0;
+
+    @Column(name = "tags", nullable = true)
+    @Builder.Default
+    private String tags = null;
 
     @Column(name = "views_count", nullable = false)
     @Builder.Default
@@ -83,11 +80,7 @@ public class Posts {
     private LocalDateTime deletedAt;
 
     public enum PostType {
-        POST,
-        QUESTION,
-        QNA,
         DISCUSSION,
-        POLL
     }
 
 }

@@ -13,9 +13,11 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.PrePersist;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -24,6 +26,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class User implements UserDetails {
 
     @Id
@@ -39,12 +42,9 @@ public class User implements UserDetails {
     @Column(name = "password", nullable = false, length = 225)
     private String password;
 
-    @Column(name = "tahun_angkatan", nullable = true)
-    private String tahun_angkatan;
 
-    @Column(name = "jurusan", nullable = true)
-    private String jurusan;
-
+    @Column(name = "kredensial",nullable = true)
+    private String kredensial;
     @Column(name = "avatar_url", nullable = true)
     private String avatar_url;
 
@@ -52,6 +52,7 @@ public class User implements UserDetails {
     private LocalDateTime createdAt;
 
     @Column(name = "is_online",nullable = true)
+    @Builder.Default
     private Boolean isOnline = false;
 
     @Column(name = "last_active",nullable = true)
@@ -66,7 +67,7 @@ public class User implements UserDetails {
     @Column(name = "badge",nullable = true)
     private String badge;
 
-    
+ 
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
