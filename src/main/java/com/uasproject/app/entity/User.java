@@ -60,7 +60,7 @@ public class User implements UserDetails {
     @Column(name = "points",nullable = true)
     private long points;
 
-    @Column(name = "bio",nullable = true,length = 520)
+    @Column(name = "bio",nullable = true,columnDefinition = "TEXT")
     private String bio;
 
     @Column(name = "badge",nullable = true)

@@ -61,13 +61,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         } catch (io.jsonwebtoken.security.SignatureException e) {
             request.setAttribute("jwt_error", "Tanda tangan token tidak cocok (Invalid Token Signature)!");
-            jwtAuthenticationEntryPoint.commence(request, response, null); // 🔴 Langsung potong jalurnya di sini
+            jwtAuthenticationEntryPoint.commence(request, response, null);
         } catch (io.jsonwebtoken.ExpiredJwtException e) {
             request.setAttribute("jwt_error", "Token sudah kedaluwarsa!");
-            jwtAuthenticationEntryPoint.commence(request, response, null); // 🔴 Langsung kirim error JSON
+            jwtAuthenticationEntryPoint.commence(request, response, null); 
         } catch (Exception e) {
             request.setAttribute("jwt_error", "Gagal memproses token keamanan!");
-            jwtAuthenticationEntryPoint.commence(request, response, null); // 🔴 Langsung kirim error JSON
+            jwtAuthenticationEntryPoint.commence(request, response, null); 
         }
     }
 }
