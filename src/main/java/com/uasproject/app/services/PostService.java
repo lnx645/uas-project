@@ -5,6 +5,7 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.regex.Matcher;
@@ -14,11 +15,16 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 
 import com.uasproject.app.Dto.CreatePostRequest;
+import com.uasproject.app.Dto.PostLikeResponseDto;
 import com.uasproject.app.Dto.PostResponseDto;
+import com.uasproject.app.Dto.VoteRequestDto;
 import com.uasproject.app.entity.PopularTags;
+import com.uasproject.app.entity.PostLikes;
 import com.uasproject.app.entity.Posts;
 import com.uasproject.app.entity.User;
 import com.uasproject.app.entity.Posts.PostType;
+import com.uasproject.app.exception.ResourceNotFoundException;
+import com.uasproject.app.repository.PostLikeRepository;
 import com.uasproject.app.repository.PostRepository;
 import com.uasproject.app.repository.TagRepository;
 
@@ -29,6 +35,7 @@ import lombok.AllArgsConstructor;
 public class PostService {
     private PostRepository postRepository;
     private TagRepository tagRepository;
+    private PostLikeRepository postLikeRepository;
 
     private Set<String> extractTags(String text) {
         Set<String> tags = new HashSet<>();
@@ -125,7 +132,7 @@ public class PostService {
         return noSpecialChars.replaceAll("[\\s-]+", "-");
     }
 
-    //utilitas
+    // utilitas
     private PostResponseDto convertToResponseDto(Posts post) {
         PostResponseDto.PostResponseDtoBuilder builder = PostResponseDto.builder()
                 .id(post.getId())
@@ -158,7 +165,8 @@ public class PostService {
 
         return builder.build();
     }
-    //mendapatkan populer tag
+
+    // mendapatkan populer tag
     public List<PopularTags> getPopularTags() {
 
         try {
@@ -173,9 +181,41 @@ public class PostService {
         }
 
     }
-    //untuk get all post
+
+    // untuk get all post
     public List<PostResponseDto> getAllPost() {
         List<Posts> allPosts = this.postRepository.findAllByOrderByCreatedAtDesc();
         return allPosts.stream().map(this::convertToResponseDto).collect(Collectors.toList());
+    }
+
+    public boolean addLikes(VoteRequestDto id, User user) {
+        Posts post = this.postRepository.findById(id.getPostId())
+                .orElseThrow(
+                        () -> new ResourceNotFoundException("Post dengan ID " + id.getPostId() + " tidak ditemukan."));
+        Optional<PostLikes> existingLike = this.postLikeRepository.findByPostAndUser(post, user);
+        if (existingLike.isPresent()) {
+            this.postLikeRepository.delete(existingLike.get());
+            int currentLikes = post.getLikesCount() != null ? post.getLikesCount() : 0;
+            post.setLikesCount(Math.max(0, currentLikes - 1));
+            this.postRepository.save(post);
+            return false;
+
+        } else {
+            PostLikes newLike = PostLikes.builder().user(user).post(post).build();
+            this.postLikeRepository.save(newLike);
+            int currentLikes = post.getLikesCount() != null ? post.getLikesCount() : 0;
+            post.setLikesCount(currentLikes + 1);
+
+            this.postRepository.save(post);
+            return true;
+        }
+    }
+
+    public List<PostLikeResponseDto> getPostUserLike(Long id) {
+        Posts post = this.postRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Post dengan ID " + id + " tidak ditemukan."));
+        List<PostLikes> postLikes = this.postLikeRepository.findByPost(post);
+        return postLikes.stream().map(like -> PostLikeResponseDto.builder().id(like.getId())
+                .avatar_url(like.getUser().getAvatar_url()).name(like.getUser().getName()).kredensial(like.getUser().getKredensial()).build()).toList();
     }
 }

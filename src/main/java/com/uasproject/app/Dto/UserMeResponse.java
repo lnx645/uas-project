@@ -50,11 +50,9 @@ public class UserMeResponse {
         if (tanggalJoinDateTime != null) {
             LocalDateTime sekarang = LocalDateTime.now();
             String textWaktuJoin;
-
             long tahun = ChronoUnit.YEARS.between(tanggalJoinDateTime, sekarang);
             long bulan = ChronoUnit.MONTHS.between(tanggalJoinDateTime, sekarang);
             long hari = ChronoUnit.DAYS.between(tanggalJoinDateTime, sekarang);
-
             if (tahun > 0) {
                 textWaktuJoin = tahun + " tahun yang lalu";
             } else if (bulan > 0) {

@@ -42,7 +42,7 @@ public class SecurityConfiguration {
                                                 .requestMatchers(HttpMethod.GET, "/api/threads/**",
                                                                 "/api/categories/**", "/api/users/active",
                                                                 "/api/users/active_this_week", "/api/popular-tags",
-                                                                "/api/posts")
+                                                                "/api/posts","/api/post/like/users/**")
 
                                                 .permitAll()
                                                 .requestMatchers(
@@ -51,7 +51,7 @@ public class SecurityConfiguration {
                                                                 "/ws-comments/**")
                                                 .permitAll()
                                                 .requestMatchers("/error").permitAll()
-                                                .requestMatchers("/api/v1/**").authenticated()
+                                                .requestMatchers("/api/v1/**","/api/post/vote","/api/v1/follow").authenticated()
                                                 .anyRequest().authenticated())
                                 .sessionManagement(session -> session
                                                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS))

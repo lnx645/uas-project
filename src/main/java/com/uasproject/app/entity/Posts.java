@@ -68,6 +68,10 @@ public class Posts {
     @Builder.Default
     private Integer likesCount = 0;
 
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @Builder.Default
+    private List<PostLikes> likes = new ArrayList<>();
+
     @Column(name = "replies_count", nullable = false)
     @Builder.Default
     private Integer repliesCount = 0;
