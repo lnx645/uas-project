@@ -16,6 +16,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
@@ -38,13 +40,20 @@ public class Posts {
     @Enumerated
     @Column(name = "post_type", nullable = false)
     private PostType postType;
-    @Column(name = "content", nullable = false, columnDefinition = "TEXT")
-    private String content;
+    @Column(name = "content", nullable = true, columnDefinition = "TEXT")
+    @Builder.Default
+    private String content = null;
 
     @Column(name = "is_anonymous", nullable = false)
     @Builder.Default
     private Boolean isAnonymous = false;
+    @Column(name = "visibility", nullable = false)
+    @Builder.Default
+    private PostVisibility visibility = PostVisibility.PUBLIC;
 
+    @Column(name = "title", nullable = true, columnDefinition = "TEXT")
+    @Builder.Default
+    private String title = null;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "author_id", nullable = false)
     private User author;
@@ -60,9 +69,16 @@ public class Posts {
     @Builder.Default
     private Integer repliesCount = 0;
 
-    @Column(name = "tags", nullable = true)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "post_related_id", nullable = true)
     @Builder.Default
-    private String tags = null;
+    private Posts post_related = null;
+
+    @ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+    @JoinTable(name = "post_tags",
+            joinColumns = @JoinColumn(name = "post_id"), inverseJoinColumns = @JoinColumn(name = "tag_id"))
+    @Builder.Default
+    private java.util.Set<PopularTags> tags = new java.util.HashSet<>();
 
     @Column(name = "views_count", nullable = false)
     @Builder.Default
@@ -80,7 +96,13 @@ public class Posts {
     private LocalDateTime deletedAt;
 
     public enum PostType {
-        DISCUSSION,
+        POST,
+        QUESTION
+    }
+
+    public enum PostVisibility {
+        FOLLOWERS,
+        PUBLIC
     }
 
 }
