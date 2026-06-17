@@ -43,6 +43,9 @@ public class Posts {
     @Column(name = "content", nullable = true, columnDefinition = "TEXT")
     @Builder.Default
     private String content = null;
+    @Column(name = "slug",nullable = true,unique = true)
+    @Builder.Default
+    private String slug = null;
 
     @Column(name = "is_anonymous", nullable = false)
     @Builder.Default

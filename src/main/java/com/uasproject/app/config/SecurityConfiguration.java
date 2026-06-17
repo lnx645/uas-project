@@ -35,7 +35,7 @@ public class SecurityConfiguration {
                                                 .requestMatchers("/api/auth/**").permitAll()
                                                 .requestMatchers(HttpMethod.GET, "/api/threads/**",
                                                                 "/api/categories/**", "/api/users/active",
-                                                                "/api/users/active_this_week")
+                                                                "/api/users/active_this_week", "/api/popular-tags","/api/posts")
                                                 .permitAll()
                                                 .requestMatchers("/error").permitAll()
                                                 .requestMatchers("/api/v1/**").authenticated()

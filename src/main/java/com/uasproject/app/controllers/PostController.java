@@ -2,6 +2,7 @@ package com.uasproject.app.controllers;
 
 import java.util.Map;
 
+import org.apache.catalina.connector.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -44,6 +45,25 @@ public class PostController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(Map.of("error", e.getMessage()));
         }
+    }
+
+    @GetMapping("/api/popular-tags")
+    public ResponseEntity<?> getPopularTag() {
+        try {
+            return ResponseEntity.ok(this.postService.getPopularTags());
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("error", e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    @GetMapping("/api/posts")
+
+    public ResponseEntity<?> getPost(){
+        return ResponseEntity.ok(this.postService.getAllPost());
     }
 
 }

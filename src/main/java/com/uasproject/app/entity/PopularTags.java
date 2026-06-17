@@ -23,26 +23,29 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PopularTags {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
+  @Column(name = "slug", nullable = true, unique = true)
+  @Builder.Default
+  private String slug = null;
 
-    @Column(name = "name", nullable = true)
-    private String name;
+  @Column(name = "name", nullable = true)
+  private String name;
 
-    @Column(name = "total_post")
-    @Builder.Default
-    private Integer totalPost = 0;
+  @Column(name = "total_post")
+  @Builder.Default
+  private Integer totalPost = 0;
 
-      @CreationTimestamp
-    @Column(name = "created_at", updatable = false)
-    private LocalDateTime createdAt;
+  @CreationTimestamp
+  @Column(name = "created_at", updatable = false)
+  private LocalDateTime createdAt;
 
-    @UpdateTimestamp
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
+  @UpdateTimestamp
+  @Column(name = "updated_at")
+  private LocalDateTime updatedAt;
 
-    @Column(name = "deleted_at")
-    private LocalDateTime deletedAt;
+  @Column(name = "deleted_at")
+  private LocalDateTime deletedAt;
 
 }
