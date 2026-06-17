@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
@@ -26,16 +27,28 @@ public class SecurityConfiguration {
         private final JwtEntryPoint jwtAuthenticationEntryPoint;
 
         @Bean
+        public WebSecurityCustomizer webSecurityCustomizer() {
+                return (web) -> web.ignoring().requestMatchers("/ws-comments/**");
+        }
+
+        @Bean
         public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
                 return httpSecurity
                                 .csrf(AbstractHttpConfigurer::disable)
                                 .formLogin(AbstractHttpConfigurer::disable)
                                 .authorizeHttpRequests(auth -> auth
                                                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                                                .requestMatchers("/api/auth/**").permitAll()
+                                                .requestMatchers("/api/auth/**", "/api/comments/**").permitAll()
                                                 .requestMatchers(HttpMethod.GET, "/api/threads/**",
                                                                 "/api/categories/**", "/api/users/active",
-                                                                "/api/users/active_this_week", "/api/popular-tags","/api/posts")
+                                                                "/api/users/active_this_week", "/api/popular-tags",
+                                                                "/api/posts")
+
+                                                .permitAll()
+                                                .requestMatchers(
+                                                                "/api/auth/**",
+                                                                "/api/comments/**",
+                                                                "/ws-comments/**")
                                                 .permitAll()
                                                 .requestMatchers("/error").permitAll()
                                                 .requestMatchers("/api/v1/**").authenticated()

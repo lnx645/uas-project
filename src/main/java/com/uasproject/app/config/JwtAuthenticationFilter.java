@@ -25,7 +25,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
     private final UserDetailsService userDetailsService;
-    private final AuthenticationEntryPoint jwtAuthenticationEntryPoint; // Tambahkan ini jika ingin langsung memicu entry point
+    private final AuthenticationEntryPoint jwtAuthenticationEntryPoint;
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        String path = request.getRequestURI();
+        return path.startsWith("/ws-comments");
+    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
@@ -34,8 +40,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         final String authHeader = request.getHeader("Authorization");
         final String jwt;
         final String email;
-
-        // 1. Jika tidak ada token (endpoint publik), langsung loloskan
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
@@ -55,8 +59,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     SecurityContextHolder.getContext().setAuthentication(authToken);
                 }
             }
-            
-            // Loloskan ke filter berikutnya jika token sukses tervalidasi
             filterChain.doFilter(request, response);
 
         } catch (io.jsonwebtoken.security.SignatureException e) {
@@ -64,10 +66,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             jwtAuthenticationEntryPoint.commence(request, response, null);
         } catch (io.jsonwebtoken.ExpiredJwtException e) {
             request.setAttribute("jwt_error", "Token sudah kedaluwarsa!");
-            jwtAuthenticationEntryPoint.commence(request, response, null); 
+            jwtAuthenticationEntryPoint.commence(request, response, null);
         } catch (Exception e) {
             request.setAttribute("jwt_error", "Gagal memproses token keamanan!");
-            jwtAuthenticationEntryPoint.commence(request, response, null); 
+            jwtAuthenticationEntryPoint.commence(request, response, null);
         }
     }
 }

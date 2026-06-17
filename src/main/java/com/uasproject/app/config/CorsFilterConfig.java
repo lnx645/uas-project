@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 
 @Component
-@Order(Ordered.HIGHEST_PRECEDENCE) // 🔴 KUNCI UTAMA: Memaksa filter ini berjalan nomor 1 paling depan sebelum filter apa pun!
+@Order(Ordered.HIGHEST_PRECEDENCE) 
 public class CorsFilterConfig implements Filter {
 
     @Override
