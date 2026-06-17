@@ -29,11 +29,7 @@ public class CommentController {
     private final PostCommentsRepository commentRepository;
     private final PostRepository postsRepository; 
     private final UserRepository userRepository;
-    
-    // 🔥 SUNTIKKAN MESSAGING TEMPLATE UNTUK BROADCAST WEBSOCKET STOMP
     private final SimpMessagingTemplate messagingTemplate;
-
-    // 📡 1. GET UTAMA: Hanya mengambil ROOT comments (parent == null), ANTI LAG!
     @GetMapping("/post/{postId}")
     public ResponseEntity<List<CommentResponseDTO>> getCommentsByPost(@PathVariable Long postId) {
         List<PostComments> allComments = commentRepository.findByPostId(postId);
@@ -46,7 +42,6 @@ public class CommentController {
         return ResponseEntity.ok(rootComments);
     }
 
-    // 📡 2. ENDPOINT BARU: Fetch replies hanya ketika tombol "Lihat Balasan" diklik di frontend
     @GetMapping("/{commentId}/replies")
     public ResponseEntity<List<CommentResponseDTO>> getRepliesByComment(@PathVariable Long commentId) {
         List<PostComments> allComments = commentRepository.findAll(); 
@@ -58,8 +53,6 @@ public class CommentController {
 
         return ResponseEntity.ok(replies);
     }
-
-    // 📡 3. POST: Menyimpan komentar baru + Tambah Poin + Broadcast Real-time
     @PostMapping("/post/{postId}")
     public ResponseEntity<CommentResponseDTO> createComment(
             @PathVariable Long postId,
@@ -87,7 +80,6 @@ public class CommentController {
 
         PostComments savedComment = commentRepository.save(comment);
 
-        // Tambah poin user (+5)
         currentUser.setPoints(currentUser.getPoints() + 5);
         userRepository.save(currentUser);
 
