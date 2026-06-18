@@ -27,6 +27,7 @@ public class PostResponseDto {
     private Posts jawaban;
     private String authorName;
     private String authorAvatarUrl;
+    private boolean isLiked;
     private Integer likesCount;
     private Integer repliesCount;
     private Integer viewsCount;

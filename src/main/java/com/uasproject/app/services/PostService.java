@@ -139,7 +139,7 @@ public class PostService {
         return noSpecialChars.replaceAll("[\\s-]+", "-");
     }
 
-    private PostResponseDto convertToResponseDto(Posts post) {
+    private PostResponseDto convertToResponseDto(Posts post, User user) {
         PostResponseDto.PostResponseDtoBuilder builder = PostResponseDto.builder()
                 .id(post.getId())
                 .postType(post.getPostType())
@@ -148,12 +148,18 @@ public class PostService {
                 .slug(post.getSlug())
                 .visibility(post.getVisibility())
                 .isAnonymous(post.getIsAnonymous())
+
                 .likesCount(post.getLikesCount())
                 .repliesCount(post.getRepliesCount())
                 .viewsCount(post.getViewsCount())
                 .facultyTag(post.getFacultyTag())
                 .createdAt(post.getCreatedAt());
-
+        if (user != null) {
+            int likeCount = this.postLikeRepository.isUserLikingPost(user.getId(), post.getId());
+            builder.isLiked(likeCount > 0);
+        } else {
+            builder.isLiked(false);
+        }
         if (post.getIsAnonymous()) {
             builder.authorName("Pengguna Anonim");
             builder.authorAvatarUrl(null);
@@ -195,7 +201,8 @@ public class PostService {
         if (currentUser == null) {
             return allPosts
                     .stream()
-                    .filter(post -> post.getVisibility() == PostVisibility.PUBLIC).map(this::convertToResponseDto)
+                    .filter(post -> post.getVisibility() == PostVisibility.PUBLIC)
+                    .map(e -> this.convertToResponseDto(e, null))
                     .collect(Collectors.toList());
         }
 
@@ -206,6 +213,7 @@ public class PostService {
                     if (post.getVisibility() == PostVisibility.PUBLIC) {
                         return true;
                     }
+
                     if (post.getVisibility() == PostVisibility.FOLLOWERS) {
                         User author = post.getAuthor();
                         if (author == null)
@@ -222,7 +230,7 @@ public class PostService {
 
                     return false;
                 })
-                .map(this::convertToResponseDto)
+                .map(post -> this.convertToResponseDto(post, currentUser))
                 .collect(Collectors.toList());
     }
 
