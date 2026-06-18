@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -16,6 +17,8 @@ import com.uasproject.app.Dto.ProfileEditRequestDto;
 import com.uasproject.app.Dto.UpdatePasswordRequest;
 import com.uasproject.app.Dto.UserRequestFollowDto;
 import com.uasproject.app.entity.User;
+import com.uasproject.app.exception.ResourceNotFoundException;
+import com.uasproject.app.services.FollowerService;
 import com.uasproject.app.services.StatisticService;
 import com.uasproject.app.services.UserService;
 
@@ -25,7 +28,8 @@ public class UserController {
     private StatisticService statisticService;
     @Autowired
     private UserService userService;
-
+    @Autowired
+    private FollowerService followerService;
     @GetMapping("/api/users/active")
     public ResponseEntity<?> activeUsers(@AuthenticationPrincipal User userDetails) {
         return ResponseEntity.ok(this.statisticService.activeUsers());
@@ -68,10 +72,40 @@ public class UserController {
         }
     }
 
-    @PostMapping("/api/v1/follow")
+    @PostMapping("/api/v1/users/{id}/follow")
     public ResponseEntity<?> follow(
             @AuthenticationPrincipal User user,
-            @RequestBody UserRequestFollowDto userRequestFollowDto) {
-        return ResponseEntity.ok("OK!");
+            @PathVariable Long id) {
+        try {
+            if (user == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User belum terautentikasi");
+            }
+
+            this.followerService.follow(user, id);
+            return ResponseEntity.ok("OK!");
+
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
+    @PostMapping("/api/v1/users/{id}/unfollow")
+    public ResponseEntity<?> unfollow(
+            @AuthenticationPrincipal User user,
+            @PathVariable Long id) {
+        try {
+            if (user == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User belum terautentikasi");
+            }
+
+            this.followerService.unfollow(user, id);
+            return ResponseEntity.ok("OK!");
+
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
     }
 }

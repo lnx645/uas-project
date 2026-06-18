@@ -40,6 +40,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         final String authHeader = request.getHeader("Authorization");
         final String jwt;
         final String email;
+
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
@@ -47,6 +48,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         try {
             jwt = authHeader.substring(7);
+
+            if (jwt.trim().isEmpty() || "null".equalsIgnoreCase(jwt) || "undefined".equalsIgnoreCase(jwt)) {
+                filterChain.doFilter(request, response);
+                return;
+            }
+
             email = jwtService.extractID(jwt);
 
             if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
@@ -59,6 +66,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     SecurityContextHolder.getContext().setAuthentication(authToken);
                 }
             }
+
             filterChain.doFilter(request, response);
 
         } catch (io.jsonwebtoken.security.SignatureException e) {
@@ -68,7 +76,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             request.setAttribute("jwt_error", "Token sudah kedaluwarsa!");
             jwtAuthenticationEntryPoint.commence(request, response, null);
         } catch (Exception e) {
-            request.setAttribute("jwt_error", "Gagal memproses token keamanan!");
+      
+            request.setAttribute("jwt_error", e.getMessage());
             jwtAuthenticationEntryPoint.commence(request, response, null);
         }
     }

@@ -27,6 +27,7 @@ import com.uasproject.app.exception.ResourceNotFoundException;
 import com.uasproject.app.repository.PostLikeRepository;
 import com.uasproject.app.repository.PostRepository;
 import com.uasproject.app.repository.TagRepository;
+import com.uasproject.app.repository.UserRepository;
 
 import lombok.AllArgsConstructor;
 
@@ -36,6 +37,7 @@ public class PostService {
     private PostRepository postRepository;
     private TagRepository tagRepository;
     private PostLikeRepository postLikeRepository;
+    private UserRepository userRepository;
 
     private Set<String> extractTags(String text) {
         Set<String> tags = new HashSet<>();
@@ -211,11 +213,31 @@ public class PostService {
         }
     }
 
-    public List<PostLikeResponseDto> getPostUserLike(Long id) {
+    @org.springframework.transaction.annotation.Transactional(readOnly = true)
+    public List<PostLikeResponseDto> getPostUserLike(Long id, User authenticatedUser) {
         Posts post = this.postRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Post dengan ID " + id + " tidak ditemukan."));
+
         List<PostLikes> postLikes = this.postLikeRepository.findByPost(post);
-        return postLikes.stream().map(like -> PostLikeResponseDto.builder().id(like.getId())
-                .avatar_url(like.getUser().getAvatar_url()).name(like.getUser().getName()).kredensial(like.getUser().getKredensial()).build()).toList();
+
+        return postLikes.stream().map(like -> {
+            User userWhoLiked = like.getUser();
+
+            boolean isCurrentIdFollowing = false;
+
+            if (authenticatedUser != null) {
+                int count = userRepository.isUserFollowingTarget(authenticatedUser.getId(), userWhoLiked.getId());
+                isCurrentIdFollowing = (count == 1);
+            }
+
+            return PostLikeResponseDto.builder()
+                    .id(userWhoLiked.getId())
+                    .avatar_url(userWhoLiked.getAvatar_url())
+                    .isFollowingUser(isCurrentIdFollowing)
+                    .name(userWhoLiked.getName())
+                    .kredensial(userWhoLiked.getKredensial())
+                    .build();
+        }).toList();
     }
+
 }

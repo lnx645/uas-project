@@ -1,5 +1,7 @@
 package com.uasproject.app.services;
 
+import java.util.Set;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -7,8 +9,10 @@ import com.uasproject.app.Dto.ProfileEditRequestDto;
 import com.uasproject.app.Dto.UpdatePasswordRequest;
 import com.uasproject.app.entity.User;
 import com.uasproject.app.entity.User.AuthProvider;
+import com.uasproject.app.exception.ResourceNotFoundException;
 import com.uasproject.app.repository.UserRepository;
 
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 
 @Service
@@ -53,4 +57,6 @@ public class UserService {
         user.setPassword(encryptedPassword);
         this.userRepository.save(user);
     }
+
+ 
 }

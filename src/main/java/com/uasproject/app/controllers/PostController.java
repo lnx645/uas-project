@@ -3,6 +3,8 @@ package com.uasproject.app.controllers;
 import java.util.Map;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,7 +27,6 @@ import lombok.AllArgsConstructor;
 public class PostController {
 
     private PostService postService;
-    private PostLikeRepository postLikeRepository;
     private UserRepository userRepository;
 
     @GetMapping("/api/threads")
@@ -66,7 +67,6 @@ public class PostController {
     }
 
     @GetMapping("/api/posts")
-
     public ResponseEntity<?> getPost() {
         return ResponseEntity.ok(this.postService.getAllPost());
     }
@@ -81,8 +81,8 @@ public class PostController {
     }
 
     @GetMapping("/api/post/like/users/{id}")
-    public ResponseEntity<?> getPostVote(@PathVariable Long id) {
-        return ResponseEntity.ok(this.postService.getPostUserLike(id));
+    public ResponseEntity<?> getPostVote(@AuthenticationPrincipal User user, @PathVariable Long id) {
+        return ResponseEntity.ok(this.postService.getPostUserLike(id, user));
     }
 
     private User getCurrentAuthenticatedUser() {

@@ -38,20 +38,20 @@ public class SecurityConfiguration {
                                 .formLogin(AbstractHttpConfigurer::disable)
                                 .authorizeHttpRequests(auth -> auth
                                                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                                                .requestMatchers("/api/auth/**", "/api/comments/**").permitAll()
-                                                .requestMatchers(HttpMethod.GET, "/api/threads/**",
-                                                                "/api/categories/**", "/api/users/active",
-                                                                "/api/users/active_this_week", "/api/popular-tags",
-                                                                "/api/posts","/api/post/like/users/**")
-
-                                                .permitAll()
-                                                .requestMatchers(
+                                                .requestMatchers(HttpMethod.GET,
+                                                                "/api/threads/**",
+                                                                "/api/categories/**",
+                                                                "/api/users/active",
+                                                                "/api/users/active_this_week", 
+                                                                "/api/popular-tags",
+                                                                "/api/posts", 
+                                                                "/api/post/like/users/",
                                                                 "/api/auth/**",
+                                                                "/api/post/like/users/**",
                                                                 "/api/comments/**",
-                                                                "/ws-comments/**")
+                                                                "/ws-comments/**","/error")
                                                 .permitAll()
-                                                .requestMatchers("/error").permitAll()
-                                                .requestMatchers("/api/v1/**","/api/post/vote","/api/v1/follow").authenticated()
+                                                .requestMatchers("/api/v1/**", "/api/post/vote").authenticated()
                                                 .anyRequest().authenticated())
                                 .sessionManagement(session -> session
                                                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
