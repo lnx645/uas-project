@@ -67,8 +67,8 @@ public class PostController {
     }
 
     @GetMapping("/api/posts")
-    public ResponseEntity<?> getPost() {
-        return ResponseEntity.ok(this.postService.getAllPost());
+    public ResponseEntity<?> getPost(@AuthenticationPrincipal User user) {
+        return ResponseEntity.ok(this.postService.getAllPost(user));
     }
 
     @PostMapping("/api/post/vote")

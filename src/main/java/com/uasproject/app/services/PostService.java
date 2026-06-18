@@ -23,6 +23,7 @@ import com.uasproject.app.entity.PostLikes;
 import com.uasproject.app.entity.Posts;
 import com.uasproject.app.entity.User;
 import com.uasproject.app.entity.Posts.PostType;
+import com.uasproject.app.entity.Posts.PostVisibility;
 import com.uasproject.app.exception.ResourceNotFoundException;
 import com.uasproject.app.repository.PostLikeRepository;
 import com.uasproject.app.repository.PostRepository;
@@ -98,7 +99,11 @@ public class PostService {
             extractedTags = this.extractTags(postRequest.getTitle());
         }
         posts.setIsAnonymous(postRequest.getIsAnonymous());
-        "FOLLOWERS".equalsIgnoreCase(postRequest.getVisibility());
+        if ("FOLLOWERS".equalsIgnoreCase(postRequest.getVisibility())) {
+            posts.setVisibility(PostVisibility.FOLLOWERS);
+        } else {
+            posts.setVisibility(PostVisibility.PUBLIC);
+        }
         posts.setAuthor(user);
         Set<PopularTags> postTags = new HashSet<>();
         for (String tagName : extractedTags) {
@@ -184,20 +189,54 @@ public class PostService {
 
     }
 
-    // untuk get all post
-    public List<PostResponseDto> getAllPost() {
+    @org.springframework.transaction.annotation.Transactional(readOnly = true)
+    public List<PostResponseDto> getAllPost(User currentUser) {
         List<Posts> allPosts = this.postRepository.findAllByOrderByCreatedAtDesc();
-        return allPosts.stream().map(this::convertToResponseDto).collect(Collectors.toList());
+
+        if (currentUser == null) {
+            return allPosts
+                    .stream()
+                    .filter(post -> post.getVisibility() == PostVisibility.PUBLIC).map(this::convertToResponseDto)
+                    .collect(Collectors.toList());
+        }
+
+        Long currentUserId = currentUser.getId();
+        return allPosts
+                .stream()
+                .filter(post -> {
+                    if (post.getVisibility() == PostVisibility.PUBLIC) {
+                        return true;
+                    }
+                    if (post.getVisibility() == PostVisibility.FOLLOWERS) {
+                        User author = post.getAuthor();
+                        if (author == null)
+                            return false;
+
+                        Long authorId = author.getId();
+                        if (authorId.equals(currentUserId)) {
+                            return true;
+                        }
+                        int followCount = userRepository.isUserFollowingTarget(currentUserId, authorId);
+
+                        return followCount > 0;
+                    }
+
+                    return false;
+                })
+                .map(this::convertToResponseDto)
+                .collect(Collectors.toList());
     }
 
     public boolean addLikes(VoteRequestDto id, User user) {
         Posts post = this.postRepository.findById(id.getPostId())
                 .orElseThrow(
                         () -> new ResourceNotFoundException("Post dengan ID " + id.getPostId() + " tidak ditemukan."));
-        Optional<PostLikes> existingLike = this.postLikeRepository.findByPostAndUser(post, user);
+        Optional<PostLikes> existingLike = this.postLikeRepository
+                .findByPostAndUser(post, user);
         if (existingLike.isPresent()) {
             this.postLikeRepository.delete(existingLike.get());
-            int currentLikes = post.getLikesCount() != null ? post.getLikesCount() : 0;
+            int currentLikes = post.getLikesCount() != null ? post
+                    .getLikesCount() : 0;
             post.setLikesCount(Math.max(0, currentLikes - 1));
             this.postRepository.save(post);
             return false;

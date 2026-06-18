@@ -15,7 +15,6 @@ import com.uasproject.app.repository.UserRepository;
 public class StatisticService {
     @Autowired
     private UserRepository userRepository;
-
     public List<UserMeResponse> activeUsers() {
         List<UserMeResponse> activeUsers = this.userRepository
                 .findAll()
@@ -25,7 +24,6 @@ public class StatisticService {
                 .collect(Collectors.toList());
         return activeUsers;
     }
-
     public List<UserThisWeekDtoResponse> topActiveUser() {
         List<UserThisWeekDtoResponse> data = this.userRepository.findAll().stream()
                 .map(user -> new UserThisWeekDtoResponse(user))
