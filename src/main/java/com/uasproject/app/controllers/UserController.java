@@ -2,7 +2,6 @@ package com.uasproject.app.controllers;
 
 import java.util.Map;
 
-import org.apache.catalina.connector.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.uasproject.app.Dto.ProfileEditRequestDto;
 import com.uasproject.app.Dto.UpdatePasswordRequest;
-import com.uasproject.app.Dto.UserRequestFollowDto;
 import com.uasproject.app.entity.User;
 import com.uasproject.app.exception.ResourceNotFoundException;
 import com.uasproject.app.services.FollowerService;

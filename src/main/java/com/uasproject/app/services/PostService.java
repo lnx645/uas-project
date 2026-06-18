@@ -139,7 +139,6 @@ public class PostService {
         return noSpecialChars.replaceAll("[\\s-]+", "-");
     }
 
-    // utilitas
     private PostResponseDto convertToResponseDto(Posts post) {
         PostResponseDto.PostResponseDtoBuilder builder = PostResponseDto.builder()
                 .id(post.getId())

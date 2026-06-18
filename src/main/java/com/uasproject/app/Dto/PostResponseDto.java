@@ -3,6 +3,7 @@ package com.uasproject.app.Dto;
 import java.time.LocalDateTime;
 import java.util.Set;
 
+import com.uasproject.app.entity.Posts;
 import com.uasproject.app.entity.Posts.PostType;
 import com.uasproject.app.entity.Posts.PostVisibility;
 
@@ -23,7 +24,7 @@ public class PostResponseDto {
     private String slug;
     private PostVisibility visibility;
     private Boolean isAnonymous;
-    
+    private Posts jawaban;
     private String authorName;
     private String authorAvatarUrl;
     private Integer likesCount;
@@ -32,4 +33,8 @@ public class PostResponseDto {
     private String facultyTag;
     private Set<String> tags; 
     private LocalDateTime createdAt;
+    public void setPostRelatedId(Long id2) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'setPostRelatedId'");
+    }
 }

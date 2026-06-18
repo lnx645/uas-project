@@ -3,8 +3,6 @@ package com.uasproject.app.controllers;
 import java.util.Map;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,7 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.uasproject.app.Dto.CreatePostRequest;
 import com.uasproject.app.Dto.VoteRequestDto;
 import com.uasproject.app.entity.User;
-import com.uasproject.app.repository.PostLikeRepository;
 import com.uasproject.app.repository.UserRepository;
 import com.uasproject.app.services.PostService;
 

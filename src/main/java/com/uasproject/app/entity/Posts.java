@@ -7,6 +7,8 @@ import java.util.List;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -43,7 +45,7 @@ public class Posts {
     @Column(name = "content", nullable = true, columnDefinition = "TEXT")
     @Builder.Default
     private String content = null;
-    @Column(name = "slug",nullable = true,unique = true)
+    @Column(name = "slug", nullable = true, unique = true)
     @Builder.Default
     private String slug = null;
 
@@ -81,9 +83,12 @@ public class Posts {
     @Builder.Default
     private Posts post_related = null;
 
+    @OneToMany(mappedBy = "post_related", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @Builder.Default
+    @JsonIgnore
+    private List<Posts> replies = new ArrayList<>();
     @ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE })
-    @JoinTable(name = "post_tags",
-            joinColumns = @JoinColumn(name = "post_id"), inverseJoinColumns = @JoinColumn(name = "tag_id"))
+    @JoinTable(name = "post_tags", joinColumns = @JoinColumn(name = "post_id"), inverseJoinColumns = @JoinColumn(name = "tag_id"))
     @Builder.Default
     private java.util.Set<PopularTags> tags = new java.util.HashSet<>();
 
